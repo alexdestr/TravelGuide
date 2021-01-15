@@ -12,20 +12,36 @@
     <artifactId>TravelGuideBot</artifactId>
 
     <properties>
+        <java.version>15</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>15</maven.compiler.source>
         <maven.compiler.target>15</maven.compiler.target>
-        <spring.version>2.4.1</spring.version>
-        <guava.version>r05</guava.version>
+        <telegrambots-spring.version>5.0.1</telegrambots-spring.version>
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.telegram/telegrambots-spring-boot-starter -->
         <dependency>
             <groupId>org.telegram</groupId>
-            <artifactId>telegrambots</artifactId>
-            <version>5.0.1</version>
+            <artifactId>telegrambots-spring-boot-starter</artifactId>
+            <version>${telegrambots-spring.version}</version>
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>TravelGuideBot</finalName>
+        <defaultGoal>package</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

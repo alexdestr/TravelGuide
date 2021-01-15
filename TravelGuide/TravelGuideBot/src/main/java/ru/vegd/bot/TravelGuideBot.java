@@ -1,19 +1,29 @@
-package ru.vegd;
+package ru.vegd.bot;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+@Component
 public class TravelGuideBot extends TelegramLongPollingBot {
+
+    //@Value("${bot.name}")
+    private String botUsername = "Trav_Guide_bot";
+
+    //@Value("{bot.token}")
+    private String botToken = "1595934785:AAG4KHp2_hm0duu4DAC9PRcGu21DHm6VRhc";
+
     @Override
     public String getBotUsername() {
-        return "Trav_Guide_bot";
+        return botUsername;
     }
 
     @Override
     public String getBotToken() {
-        return "1595934785:AAG4KHp2_hm0duu4DAC9PRcGu21DHm6VRhc";
+        return botToken;
     }
 
     @Override
