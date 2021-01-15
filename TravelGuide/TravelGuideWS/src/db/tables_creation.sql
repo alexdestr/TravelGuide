@@ -1,0 +1,11 @@
+CREATE TABLE city
+(
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    name VARCHAR UNIQUE NOT NULL
+);
+
+CREATE TABLE description
+(
+    id BIGINT NOT NULL REFERENCES city(id),
+    description TEXT NOT NULL
+);

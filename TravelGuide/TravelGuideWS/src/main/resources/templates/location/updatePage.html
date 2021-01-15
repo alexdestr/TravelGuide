@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tittle</title>
+</head>
+<body>
+Обновить информацию
+<form action="./updateLocation" method="post">
+    Город: <input type="text" value="" th:field="*{city.name}" name="city" required> <br>
+    Новое описание: <input type="text" th:field="*{descr.description}" name="description" required> <br>
+    <button type="submit">Обновить</button>
+</form>
+</body>
+</html>
