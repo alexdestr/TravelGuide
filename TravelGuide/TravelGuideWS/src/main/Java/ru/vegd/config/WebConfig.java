@@ -46,24 +46,6 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public ViewResolver cnViewResolver(ContentNegotiationManager cnm) {
-        ContentNegotiatingViewResolver cnvr = new ContentNegotiatingViewResolver();
-        cnvr.setContentNegotiationManager(cnm);
-        cnvr.setOrder(1);
-        List<View> views = new ArrayList<View>();
-        views.add(jsonView());
-        cnvr.setDefaultViews(views);
-        return cnvr;
-    }
-
-    @Bean
-    public View jsonView() {
-        MappingJackson2JsonView view = new MappingJackson2JsonView();
-        view.setPrettyPrint(true);
-        return view;
-    }
-
-    @Bean
     public ViewResolver viewResolver() {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
 
