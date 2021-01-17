@@ -6,6 +6,11 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.vegd.receiver.LocationDataReceiver;
+import ru.vegd.response.Response;
+import ru.vegd.response.ResponseBuilder;
+
+import java.io.IOException;
 
 @Component
 public class TravelGuideBot extends TelegramLongPollingBot {
@@ -29,9 +34,21 @@ public class TravelGuideBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
+            ResponseBuilder responseBuilder = new ResponseBuilder();
+            Response response = null;
+            try {
+                response = responseBuilder.build(new LocationDataReceiver().getLocationInformation(update.getMessage().getText()));
+            } catch (IOException e) {
+                // TODO
+            }
+
             SendMessage message = new SendMessage();
             message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            message.setText("just test");
+            if (response.getDescription().isEmpty() || response.getDescription() == null) {
+                message.setText("Город не найден.");
+            } else {
+                message.setText(response.getDescription());
+            }
             try {
                 execute(message); // Call method to send the message
             } catch (TelegramApiException e) {
