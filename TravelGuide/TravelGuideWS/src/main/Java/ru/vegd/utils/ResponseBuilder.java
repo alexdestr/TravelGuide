@@ -1,6 +1,7 @@
 package ru.vegd.utils;
 
 import com.google.gson.JsonObject;
+import org.springframework.http.HttpStatus;
 
 public class ResponseBuilder {
     private String name;
@@ -13,6 +14,7 @@ public class ResponseBuilder {
         JsonObject json = new JsonObject();
         json.addProperty("name", name);
         json.addProperty("description", description);
+        json.addProperty("status", HttpStatus.OK.value());
         return json;
     }
 

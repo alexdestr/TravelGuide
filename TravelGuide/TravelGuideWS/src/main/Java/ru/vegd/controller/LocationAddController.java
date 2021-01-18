@@ -1,11 +1,10 @@
 package ru.vegd.controller;
 
-import com.google.gson.JsonParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ru.vegd.entity.City;
@@ -13,20 +12,19 @@ import ru.vegd.entity.Description;
 import ru.vegd.repository.CityRepository;
 import ru.vegd.repository.DescriptionRepository;
 import ru.vegd.util.JsonToEntityConverter;
+import ru.vegd.utils.ResponseStatusBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
 @PropertySource("sec.properties")
 public class LocationAddController {
 
-    @Value("${sec.key}")
-    private String key;
+    @Value("${sec.token}")
+    private String token;
 
     @Autowired
     private CityRepository cityRepo;
@@ -42,7 +40,7 @@ public class LocationAddController {
                 .lines()
                 .collect(Collectors.joining(System.lineSeparator())));
 
-        if (resultMap != null && key.equals(resultMap.get("key"))) {
+        if (resultMap != null && token.equals(resultMap.get("key"))) {
             City city = new City();
             Description description = new Description();
 
@@ -55,12 +53,12 @@ public class LocationAddController {
                 description.setDescription(resultMap.get("description"));
                 descriptionRepo.save(description);
 
-                return "Successfully created";
+                return ResponseStatusBuilder.getStatusCode(HttpStatus.CREATED.value()).toString();
             } else {
-                return "City already exist";
+                return ResponseStatusBuilder.getStatusCode(HttpStatus.BAD_REQUEST.value()).toString();
             }
         } else {
-            return "Forbidden";
+            return ResponseStatusBuilder.getStatusCode(HttpStatus.FORBIDDEN.value()).toString();
         }
     }
 }

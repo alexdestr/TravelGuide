@@ -48,10 +48,10 @@ public class TravelGuideBot extends TelegramLongPollingBot {
 
             SendMessage message = new SendMessage();
             message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            if (response.getDescription().isEmpty() || response.getDescription() == null) {
-                message.setText("Город не найден.");
-            } else {
+            if (response != null && response.getDescription() != null) {
                 message.setText(response.getDescription());
+            } else {
+                message.setText("Город не найден.");
             }
             try {
                 execute(message); // Call method to send the message

@@ -3,30 +3,27 @@ package ru.vegd.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import ru.vegd.entity.City;
 import ru.vegd.entity.Description;
 import ru.vegd.repository.CityRepository;
 import ru.vegd.repository.DescriptionRepository;
 import ru.vegd.util.JsonToEntityConverter;
+import ru.vegd.utils.ResponseStatusBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
 @PropertySource("sec.properties")
 public class LocationUpdateController {
 
-    @Value("${sec.key}")
-    private String key;
+    @Value("${sec.token}")
+    private String token;
 
     @Autowired
     private CityRepository cityRepo;
@@ -42,7 +39,7 @@ public class LocationUpdateController {
                 .lines()
                 .collect(Collectors.joining(System.lineSeparator())));
 
-        if (resultMap != null && key.equals(resultMap.get("key"))) {
+        if (resultMap != null && token.equals(resultMap.get("key"))) {
             Description description = new Description();
             Long id = cityRepo.findByName(resultMap.get("name")).getId();
 
@@ -52,12 +49,12 @@ public class LocationUpdateController {
 
                 descriptionRepo.save(description);
 
-                return "Successfully updated";
+                return ResponseStatusBuilder.getStatusCode(HttpStatus.OK.value()).toString();
             } else {
-                return "City not found";
+                return ResponseStatusBuilder.getStatusCode(HttpStatus.BAD_REQUEST.value()).toString();
             }
         } else {
-            return "Forbidden";
+            return ResponseStatusBuilder.getStatusCode(HttpStatus.FORBIDDEN.value()).toString();
         }
     }
 }

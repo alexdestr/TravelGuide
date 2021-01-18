@@ -1,7 +1,9 @@
 package ru.vegd.controller;
 
 import com.google.gson.JsonObject;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,12 +14,17 @@ import ru.vegd.entity.Description;
 import ru.vegd.repository.CityRepository;
 import ru.vegd.repository.DescriptionRepository;
 import ru.vegd.utils.ResponseBuilder;
+import ru.vegd.utils.ResponseStatusBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @Controller
 public class LocationGetController {
+
+    private final static org.slf4j.Logger logger =
+            LoggerFactory.getLogger(LocationGetController.class);
+
     @Autowired
     private CityRepository cityRepo;
 
@@ -36,6 +43,6 @@ public class LocationGetController {
                 }
             }
         }
-        return "Not found.";
+        return ResponseStatusBuilder.getStatusCode(HttpStatus.BAD_REQUEST.value()).toString();
     }
 }
