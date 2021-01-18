@@ -1,53 +1,64 @@
 package ru.vegd.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import ru.vegd.entity.City;
 import ru.vegd.entity.Description;
 import ru.vegd.repository.CityRepository;
 import ru.vegd.repository.DescriptionRepository;
+import ru.vegd.util.JsonToEntityConverter;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
-
-import static ru.vegd.controller.PathConstants.PATH_LOCATION_DELETE;
-import static ru.vegd.controller.PathConstants.REDIRECT;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
+@PropertySource("sec.properties")
 public class LocationDeleteController {
+
+    @Value("${sec.key}")
+    private String key;
+
     @Autowired
     private CityRepository cityRepo;
 
     @Autowired
     private DescriptionRepository descriptionRepo;
 
-    @GetMapping("/location/delete")
-    public String form(Model model) {
-        model.addAttribute("city", new City());
-        model.addAttribute("descr", new Description());
+    @PostMapping("/location/delete")
+    @ResponseBody
+    public String addLocation(HttpServletRequest request) throws IOException {
 
-        return PATH_LOCATION_DELETE;
-    }
+        Map<String, String> resultMap = JsonToEntityConverter.convert(request.getReader()
+                .lines()
+                .collect(Collectors.joining(System.lineSeparator())));
 
-    @PostMapping("/location/deleteLocation")
-    public String addLocation(
-            HttpServletResponse response,
-            @ModelAttribute("city") City city,
-            @ModelAttribute("descr") Description description) {
+        if (resultMap != null && key.equals(resultMap.get("key"))) {
+            City city = new City();
+            Description description = new Description();
 
-        Optional<City> nCity = Optional.ofNullable(cityRepo.findByName(city.getName()));
+            city.setName(resultMap.get("name"));
+            Long id = cityRepo.findByName(city.getName()).getId();
 
-        if (nCity.isPresent()) {
-            city.setId(nCity.get().getId());
-            description.setId(nCity.get().getId());
-            descriptionRepo.delete(description);
-            cityRepo.delete(city);
+            if (id != null) {
+                city.setId(id);
+
+                description.setId(id);
+                descriptionRepo.delete(description);
+
+                cityRepo.delete(city);
+
+                return "Successfully deleted";
+            } else {
+                return "City doesn't exists";
+            }
+        } else {
+            return "Forbidden";
         }
-
-        return REDIRECT;
     }
 }

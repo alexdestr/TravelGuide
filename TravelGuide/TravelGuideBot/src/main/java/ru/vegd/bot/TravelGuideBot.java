@@ -1,5 +1,6 @@
 package ru.vegd.bot;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -14,6 +15,9 @@ import java.io.IOException;
 
 @Component
 public class TravelGuideBot extends TelegramLongPollingBot {
+
+    private final static org.slf4j.Logger logger =
+            LoggerFactory.getLogger(TravelGuideBot.class);
 
     //@Value("${bot.name}")
     private String botUsername = "Trav_Guide_bot";
@@ -39,7 +43,7 @@ public class TravelGuideBot extends TelegramLongPollingBot {
             try {
                 response = responseBuilder.build(new LocationDataReceiver().getLocationInformation(update.getMessage().getText()));
             } catch (IOException e) {
-                // TODO
+                logger.warn("IOException:", e);
             }
 
             SendMessage message = new SendMessage();
@@ -52,7 +56,7 @@ public class TravelGuideBot extends TelegramLongPollingBot {
             try {
                 execute(message); // Call method to send the message
             } catch (TelegramApiException e) {
-                // TODO
+                logger.warn("Telegram API exception: ", e);
             }
         }
     }

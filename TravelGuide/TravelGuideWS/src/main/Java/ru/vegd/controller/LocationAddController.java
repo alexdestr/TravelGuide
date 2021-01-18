@@ -1,22 +1,32 @@
 package ru.vegd.controller;
 
+import com.google.gson.JsonParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import ru.vegd.entity.City;
 import ru.vegd.entity.Description;
 import ru.vegd.repository.CityRepository;
 import ru.vegd.repository.DescriptionRepository;
+import ru.vegd.util.JsonToEntityConverter;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
-
-import static ru.vegd.controller.PathConstants.*;
+import java.util.stream.Collectors;
 
 @Controller
+@PropertySource("sec.properties")
 public class LocationAddController {
+
+    @Value("${sec.key}")
+    private String key;
 
     @Autowired
     private CityRepository cityRepo;
@@ -24,28 +34,33 @@ public class LocationAddController {
     @Autowired
     private DescriptionRepository descriptionRepo;
 
-    @GetMapping("/location/add")
-    public String form(Model model) {
-        model.addAttribute("city", new City());
-        model.addAttribute("descr", new Description());
+    @PostMapping("/location/add")
+    @ResponseBody
+    public String addLocation(HttpServletRequest request) throws IOException {
 
-        return PATH_LOCATION_ADD;
-    }
+        Map<String, String> resultMap = JsonToEntityConverter.convert(request.getReader()
+                .lines()
+                .collect(Collectors.joining(System.lineSeparator())));
 
-    @PostMapping("/location/addLocation")
-    public String addLocation(
-            @ModelAttribute("city") City city,
-            @ModelAttribute("descr") Description description) {
+        if (resultMap != null && key.equals(resultMap.get("key"))) {
+            City city = new City();
+            Description description = new Description();
 
-        Optional<City> nCity = Optional.ofNullable(cityRepo.findByName(city.getName()));
+            city.setName(resultMap.get("name"));
+            if (cityRepo.findByName(city.getName()) == null) {
+                cityRepo.save(city);
+                Long cityId = cityRepo.findByName(city.getName()).getId();
 
-        if (nCity.isEmpty()) {
-            cityRepo.save(city);
-            Long id = cityRepo.findByName(city.getName()).getId();
-            description.setId(id);
-            descriptionRepo.save(description);
+                description.setId(cityId);
+                description.setDescription(resultMap.get("description"));
+                descriptionRepo.save(description);
+
+                return "Successfully created";
+            } else {
+                return "City already exist";
+            }
+        } else {
+            return "Forbidden";
         }
-
-        return REDIRECT;
     }
 }
