@@ -2,6 +2,7 @@ package ru.vegd.bot;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,16 +15,17 @@ import ru.vegd.response.ResponseBuilder;
 import java.io.IOException;
 
 @Component
+@PropertySource("bot.properties")
 public class TravelGuideBot extends TelegramLongPollingBot {
 
     private final static org.slf4j.Logger logger =
             LoggerFactory.getLogger(TravelGuideBot.class);
 
-    //@Value("${bot.name}")
-    private String botUsername = "Trav_Guide_bot";
+    @Value("${bot.name}")
+    private String botUsername;
 
-    //@Value("{bot.token}")
-    private String botToken = "1595934785:AAG4KHp2_hm0duu4DAC9PRcGu21DHm6VRhc";
+    @Value("${bot.token}")
+    private String botToken;
 
     @Override
     public String getBotUsername() {
