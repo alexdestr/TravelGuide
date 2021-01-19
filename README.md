@@ -18,6 +18,8 @@ Telegram: @Trav_Guide_bot
 ---
 Скрипты для инициализации базы данных лежат в модуле TravelGuideWS
 ---
+СУБД: postgresql
+---
 
 Примеры запросов:
 ---
