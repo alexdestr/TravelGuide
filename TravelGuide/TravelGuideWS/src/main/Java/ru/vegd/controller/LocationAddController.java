@@ -12,7 +12,7 @@ import ru.vegd.entity.Description;
 import ru.vegd.repository.CityRepository;
 import ru.vegd.repository.DescriptionRepository;
 import ru.vegd.util.JsonToEntityConverter;
-import ru.vegd.utils.ResponseStatusBuilder;
+import ru.vegd.util.ResponseStatusBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;

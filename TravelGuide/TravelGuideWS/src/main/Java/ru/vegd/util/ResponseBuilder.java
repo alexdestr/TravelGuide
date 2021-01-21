@@ -1,4 +1,4 @@
-package ru.vegd.utils;
+package ru.vegd.util;
 
 import com.google.gson.JsonObject;
 import org.springframework.http.HttpStatus;

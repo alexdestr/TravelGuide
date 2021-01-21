@@ -1,6 +1,5 @@
 package ru.vegd.controller;
 
-import com.google.gson.JsonObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,8 +12,8 @@ import ru.vegd.entity.City;
 import ru.vegd.entity.Description;
 import ru.vegd.repository.CityRepository;
 import ru.vegd.repository.DescriptionRepository;
-import ru.vegd.utils.ResponseBuilder;
-import ru.vegd.utils.ResponseStatusBuilder;
+import ru.vegd.util.ResponseBuilder;
+import ru.vegd.util.ResponseStatusBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
